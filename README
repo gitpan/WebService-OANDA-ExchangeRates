@@ -26,7 +26,7 @@ SYNOPSIS
           quote         => [ qw{ EUR CAD } ],
       );
       if ($response->is_success) {
-          my $base_currency = $quote->data->{base_currency};
+          my $base_currency = $response->data->{base_currency};
           print "Base Currency: $base_currency\n";
           foreach my $quote_currency (keys %{$response->data->{quotes}) {
               my $quote = $response->data->{quotes}{$quote_currency};
@@ -84,10 +84,10 @@ METHODS
     object that provides access to the HTTP::Response object and has
     deserialized the JSON response into a native Perl data structure.
 
-   get_currencies
+   get_currencies(%options)
     $response = $api->get_currencies()
         Returns the "/v1/currencies.json" endpoint; a hash of valid currency
-        codes.
+        codes for the chosen dataset.
 
         NOTE: This endpoint usually returns an array of hashes which contain
         *code* and *description* keys but "get_currencies()" massages them
@@ -103,6 +103,17 @@ METHODS
               CAD => 'Canadian Dollar',
               ...
           }
+
+        *   data_set
+
+            Which data set to use. The API, as of this writing, has two data
+            sets. They are the default *oanda* rate or the *ecb* (European
+            Central Bank) rate. Each dataset tracks a different number of
+            currencies.
+
+            DEFAULT: oanda
+
+              data_set => 'ecb'
 
    get_remaining_quotes
     $response = $api->get_remaining_quotes()
@@ -156,6 +167,16 @@ METHODS
               quote => 'EUR'
               quote => [qw{ EUR GBP CHF }]
 
+        *   data_set
+
+            Which data set to use. The API, as of this writing, has two data
+            sets. They are the default *oanda* rate or the *ecb* (European
+            Central Bank) rate.
+
+            DEFAULT: oanda
+
+              data_set => 'ecb'
+
         *   decimal_places
 
             The number of decimal places to provide in the quote. May be a
@@ -184,6 +205,8 @@ METHODS
 
             It should be noted that this module does not restrict what these
             strings are so as to be forward compatible with any changes.
+            When using the "data_set" parameter for European Central Bank
+            (ECB) rates, this parameter is ignored.
 
             DEFAULT: averages
 
